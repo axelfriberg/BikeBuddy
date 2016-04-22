@@ -4,11 +4,18 @@
         <item
             android:id="@+id/navigation_item_1"
             android:checked="true"
-            android:icon="@drawable/ic_map_black_48dp"
             android:title="@string/navigation_item_1"/>
         <item
             android:id="@+id/navigation_item_2"
-            android:icon="@drawable/ic_lock_outline_black_48dp"
             android:title="@string/navigation_item_2"/>
+        <item
+            android:id="@+id/navigation_item_lock"
+            android:title="@string/navigation_item_lock"/>
     </group>
 </menu>
+<!--
+            android:icon="@drawable/ic_map_black_48dp"
+                        android:icon="@drawable/ic_lock_outline_black_48dp"
+
+
+-->

@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         final ActionBar ab = getSupportActionBar();
         if(ab != null){
-            ab.setHomeAsUpIndicator(R.drawable.ic_menu_white_48dp);
+            //ab.setHomeAsUpIndicator(R.drawable.ic_menu_white_48dp);
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                         //Check to see which item was being clicked and perform appropriate action
 
                         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        FragmentManager fm = getSupportFragmentManager();
+
                         switch (menuItem.getItemId()){
                             case R.id.navigation_item_1:
                                 ContentFragment contentFragment = new ContentFragment();
@@ -81,6 +81,13 @@ public class MainActivity extends AppCompatActivity {
                                 ContentFragment2 contentFragment2 = new ContentFragment2();
                                 Toast.makeText(getApplicationContext(),"Nav 2",Toast.LENGTH_SHORT).show();
                                 fragmentTransaction.replace(R.id.frame,contentFragment2);
+                                fragmentTransaction.addToBackStack(null);
+                                fragmentTransaction.commit();
+                                return true;
+                            case R.id.navigation_item_lock:
+                                LockFragment lockFragment = new LockFragment();
+                                Toast.makeText(getApplicationContext(),"Nav 2",Toast.LENGTH_SHORT).show();
+                                fragmentTransaction.replace(R.id.frame,lockFragment);
                                 fragmentTransaction.addToBackStack(null);
                                 fragmentTransaction.commit();
                                 return true;
@@ -105,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
