@@ -22,6 +22,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -33,7 +34,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
     public static final String TAG = MapsActivity.class.getSimpleName();
-   private MarkerOptions options = new MarkerOptions();
+   private Marker marker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +100,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void handleNewLocation(Location location) {
-        options.visible(true);
+       if(marker == null){
+       }else{
+           marker.remove();
+       }
         Log.d(TAG, location.toString());
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
@@ -107,16 +111,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // marker for current position
 
-                options.position(latLng);
-                options.title("Your bike");
-        mMap.addMarker(options);
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .title("Your bike");
+       marker = mMap.addMarker(options);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         Log.i(TAG, "updates borta");
     }
 
     public void removeMarker(){
-        options.visible(false);
+        marker.remove();
     }
     @Override
     public void onConnectionSuspended(int i) {
