@@ -76,9 +76,9 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 return true;
                             case R.id.navigation_item_2:
-                                ContentFragment2 contentFragment2 = new ContentFragment2();
+                                NFCFragment nfcFragment = new NFCFragment();
                                 Toast.makeText(getApplicationContext(),"Nav 2",Toast.LENGTH_SHORT).show();
-                                fragmentTransaction.replace(R.id.frame,contentFragment2);
+                                fragmentTransaction.replace(R.id.frame,nfcFragment);
                                 fragmentTransaction.addToBackStack(null);
                                 fragmentTransaction.commit();
                                 return true;
