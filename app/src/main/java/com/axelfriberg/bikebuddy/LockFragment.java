@@ -23,7 +23,10 @@ public class LockFragment extends Fragment implements View.OnClickListener {
 
         // Required empty public constructor
     }
-
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActivity().setTitle(R.string.navigation_item_lock);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,7 +34,7 @@ public class LockFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_lock, container, false);
         b = (Button)v.findViewById(R.id.button_lock);
-        locked = (TextView) v.findViewById(R.id.locked_text);
+        locked = (TextView)v.findViewById(R.id.locked_text);
         lockImage = (ImageView)v.findViewById(R.id.lock_image);
         b.setOnClickListener(this);
         return v;
@@ -50,4 +53,10 @@ public class LockFragment extends Fragment implements View.OnClickListener {
         }
 
     }
+    public void onResume(){
+        super.onResume();
+        getActivity().setTitle(R.string.navigation_item_lock);
+    }
 }
+
+

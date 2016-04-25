@@ -13,5 +13,10 @@
             android:id="@+id/navigation_item_lock"
             android:icon="@drawable/ic_lock_outline_black_48dp"
             android:title="@string/navigation_item_lock"/>
+        <item
+            android:id="@+id/navigation_item_statistics"
+            android:title="Statistics"
+            />
+
     </group>
 </menu>

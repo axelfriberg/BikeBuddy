@@ -86,8 +86,15 @@ public class MainActivity extends AppCompatActivity {
                                 return true;
                             case R.id.navigation_item_lock:
                                 LockFragment lockFragment = new LockFragment();
-                                Toast.makeText(getApplicationContext(),"Nav 2",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(),"Nav 3",Toast.LENGTH_SHORT).show();
                                 fragmentTransaction.replace(R.id.frame,lockFragment);
+                                fragmentTransaction.addToBackStack(null);
+                                fragmentTransaction.commit();
+                                return true;
+                            case R.id.navigation_item_statistics:
+                                StatisticFragment statisticFragment = new StatisticFragment();
+                                Toast.makeText(getApplicationContext(),"Nav 4",Toast.LENGTH_SHORT).show();
+                                fragmentTransaction.replace(R.id.frame,statisticFragment);
                                 fragmentTransaction.addToBackStack(null);
                                 fragmentTransaction.commit();
                                 return true;
