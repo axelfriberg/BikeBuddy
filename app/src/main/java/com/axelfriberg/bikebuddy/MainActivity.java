@@ -1,5 +1,6 @@
 package com.axelfriberg.bikebuddy;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         final ActionBar ab = getSupportActionBar();
         if(ab != null){
-            //ab.setHomeAsUpIndicator(R.drawable.ic_menu_white_48dp);
+            ab.setHomeAsUpIndicator(R.drawable.ic_menu_white_48dp);
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         ContentFragment fragment = new ContentFragment();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame, fragment);
         fragmentTransaction.commit();
 
@@ -67,15 +68,12 @@ public class MainActivity extends AppCompatActivity {
                         mDrawerLayout.closeDrawers();
                         //Check to see which item was being clicked and perform appropriate action
 
-                        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
                         switch (menuItem.getItemId()){
                             case R.id.navigation_item_1:
-                                ContentFragment contentFragment = new ContentFragment();
-                                Toast.makeText(getApplicationContext(),"Nav 1",Toast.LENGTH_SHORT).show();
-                                fragmentTransaction.replace(R.id.frame,contentFragment);
-                                fragmentTransaction.addToBackStack(null);
-                                fragmentTransaction.commit();
+                                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                                startActivity(intent);
                                 return true;
                             case R.id.navigation_item_2:
                                 ContentFragment2 contentFragment2 = new ContentFragment2();
