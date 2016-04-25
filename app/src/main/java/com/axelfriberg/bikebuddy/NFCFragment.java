@@ -45,6 +45,7 @@ public class NFCFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         if (isYourBike) {
+            button.setText("Scan again");
             text.setText("This is your bike!");
             image.setImageResource(R.drawable.check);
             isYourBike = false;
