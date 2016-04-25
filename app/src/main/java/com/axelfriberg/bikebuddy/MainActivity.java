@@ -3,9 +3,7 @@ package com.axelfriberg.bikebuddy;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,7 +11,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -71,27 +68,24 @@ public class MainActivity extends AppCompatActivity {
                         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
                         switch (menuItem.getItemId()){
-                            case R.id.navigation_item_1:
+                            case R.id.navigation_item_map:
                                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
                                 startActivity(intent);
                                 return true;
-                            case R.id.navigation_item_2:
+                            case R.id.navigation_item_nfc:
                                 NFCFragment nfcFragment = new NFCFragment();
-                                Toast.makeText(getApplicationContext(),"Nav 2",Toast.LENGTH_SHORT).show();
                                 fragmentTransaction.replace(R.id.frame,nfcFragment);
                                 fragmentTransaction.addToBackStack(null);
                                 fragmentTransaction.commit();
                                 return true;
                             case R.id.navigation_item_lock:
                                 LockFragment lockFragment = new LockFragment();
-                                Toast.makeText(getApplicationContext(),"Nav 3",Toast.LENGTH_SHORT).show();
                                 fragmentTransaction.replace(R.id.frame,lockFragment);
                                 fragmentTransaction.addToBackStack(null);
                                 fragmentTransaction.commit();
                                 return true;
                             case R.id.navigation_item_statistics:
                                 StatisticFragment statisticFragment = new StatisticFragment();
-                                Toast.makeText(getApplicationContext(),"Nav 4",Toast.LENGTH_SHORT).show();
                                 fragmentTransaction.replace(R.id.frame,statisticFragment);
                                 fragmentTransaction.addToBackStack(null);
                                 fragmentTransaction.commit();
@@ -129,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        } else if(id == R.id.navigation_item_1){
+        } else if(id == R.id.navigation_item_map){
             Toast.makeText(MainActivity.this, " Nav", Toast.LENGTH_SHORT).show();
         }
 

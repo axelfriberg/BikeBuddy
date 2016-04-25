@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/navigation_item_1"
+            android:id="@+id/navigation_item_map"
             android:checked="true"
             android:icon="@drawable/ic_map_black_48dp"
-            android:title="@string/navigation_item_1"/>
+            android:title="@string/title_activity_maps"/>
         <item
-            android:id="@+id/navigation_item_2"
+            android:id="@+id/navigation_item_nfc"
             android:title="@string/navigation_item_2"
             android:icon="@drawable/ic_nfc_black_48dp"/>
         <item
@@ -17,6 +17,7 @@
         <item
             android:id="@+id/navigation_item_statistics"
             android:title="Statistics"
+            android:icon="@drawable/ic_timeline_black_48dp"
             />
 
     </group>
