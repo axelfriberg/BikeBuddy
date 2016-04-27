@@ -92,6 +92,12 @@ public class MainActivity extends AppCompatActivity {
                                 fragmentTransaction.addToBackStack(null);
                                 fragmentTransaction.commit();
                                 return true;
+                            case R.id.navigation_item_notification:
+                                NotificationFragment notificationFragment = new NotificationFragment();
+                                fragmentTransaction.replace(R.id.frame,notificationFragment);
+                                fragmentTransaction.addToBackStack(null);
+                                fragmentTransaction.commit();
+                                return true;
                             default:
                                 Toast.makeText(getApplicationContext(),"Somethings Wrong",Toast.LENGTH_SHORT).show();
                                 return true;
