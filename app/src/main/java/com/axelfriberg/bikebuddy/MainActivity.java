@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        ContentFragment fragment = new ContentFragment();
+        TrackingFragment fragment = new TrackingFragment();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame, fragment);
         fragmentTransaction.commit();
@@ -69,8 +69,10 @@ public class MainActivity extends AppCompatActivity {
 
                         switch (menuItem.getItemId()){
                             case R.id.navigation_item_map:
-                                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-                                startActivity(intent);
+                                TrackingFragment trackingFragment = new TrackingFragment();
+                                fragmentTransaction.replace(R.id.frame,trackingFragment);
+                                fragmentTransaction.addToBackStack(null);
+                                fragmentTransaction.commit();
                                 return true;
                             case R.id.navigation_item_nfc:
                                 NFCFragment nfcFragment = new NFCFragment();
