@@ -1,8 +1,10 @@
 package com.axelfriberg.bikebuddy;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 
+import android.content.SharedPreferences;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentTransaction;
 
@@ -56,17 +58,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private SupportMapFragment mMapFragment;
     private TextView tv;
     private boolean enableUpdates;
+    private boolean enableVibration;
+    private Button button1;
+    private Button button2;
+    private int counter = 0;
 
     private double currentLatitude;
     private double currentLongitude;
-    private double markerLatitude = 0;
-    private double markerLongitude = 0;
+    private double markerLatitude;
+    private double markerLongitude;
+
 
     // för att få sin egen position
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     public static final String TAG = MapsActivity.class.getSimpleName();
     private Marker marker;
+
+    //Save data to shared preferences
+    private SharedPreferences activityPreferences;
+    private SharedPreferences.Editor editor;
 
 
     @Override
@@ -87,8 +98,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.mapOld);
         mMapFragment.getMapAsync(this);
 
-        Button button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(this);
+        button1 = (Button) findViewById(R.id.mark_button);
+        button2 = (Button) findViewById(R.id.remove_button);
+        button1.setOnClickListener(this);
+        button2.setOnClickListener(this);
         //set text textview
         tv = (TextView) findViewById(R.id.distance);
 
@@ -111,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+
 
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -366,16 +380,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onResume() {
         super.onResume();
+
         if (mGoogleApiClient.isConnected()) {
             startLocationUpdates();
             Log.d(TAG, "Location update resumed");
         }
+
     }
 
     private void handleNewLocation(Location location) {
         Log.d(TAG, location.toString());
         currentLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
+        counter ++;
 
 
         // marker for current position
@@ -400,9 +417,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (markerLatitude == 0 && markerLongitude == 0) {
             tv.setText("Bike is not parked");
+            enableVibration = false;
         } else {
             tv.setText("Distance: " + distance(markerLatitude, markerLongitude, 0, 0) + " m");
             Log.v("Tag", "updates");
+            enableVibration = true;
         }
     }
 
@@ -420,21 +439,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         double height = el1 - el2;
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
         distance = Math.sqrt(distance);
+    if (enableVibration && counter == 5) {
+         if (distance <= 1) {
+             vibrate(100);
+            } else if (distance <= 5) {
+             vibrate(200);
+            } else if (distance <= 10) {
+              vibrate(300);
+         } else if (distance <= 25) {
+             vibrate(400);
+            } else if (distance <= 50) {
+             vibrate(500);
+            } else {
 
-        if (distance <= 1) {
-            vibrate(100);
-        } else if (distance <= 5) {
-            vibrate(200);
-        } else if (distance <= 10) {
-            vibrate(300);
-        } else if (distance <= 25) {
-            vibrate(400);
-        } else if (distance <= 50) {
-            vibrate(500);
-        } else {
-
-        }
-
+            }
+        counter = 0;
+    }
         DecimalFormat df = new DecimalFormat("#.##");
         String distance2 = df.format(distance);
         return distance2;
@@ -448,7 +468,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onClick(View v) {
-        enableUpdates = true;
+        if (v.getId() == R.id.mark_button) {
+            enableUpdates = true;
+        } else if (v.getId() == R.id.remove_button) {
+            if (marker == null) {
+                Log.v("hej", "null markör" );
+            } else {
+                Log.v("hej", "null ej markör" );
+                marker.remove();
+                enableVibration= false;
+                enableUpdates = false;
+                tv.setText("Bike is not parked");
+            }
+            markerLatitude = 0;
+            markerLongitude = 0;
+        }
     }
+
 
 }
