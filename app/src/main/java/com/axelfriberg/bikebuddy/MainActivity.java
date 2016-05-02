@@ -1,8 +1,11 @@
 package com.axelfriberg.bikebuddy;
 
 import android.Manifest;
-import  android.support.v4.app.FragmentTransaction;
-import android.content.IntentSender;
+import android.content.Context;
+
+import android.os.Vibrator;
+import android.support.v4.app.FragmentTransaction;
+
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -20,10 +23,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -35,6 +41,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.google.android.gms.common.api.Status;
+
+import java.text.DecimalFormat;
+
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener {
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 150;
@@ -44,12 +54,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ActionBarDrawerToggle mDrawerToggle;
     private GoogleMap mMap;
     private SupportMapFragment mMapFragment;
+    private TextView tv;
+    private boolean enableUpdates;
+
+    private double currentLatitude;
+    private double currentLongitude;
+    private double markerLatitude = 0;
+    private double markerLongitude = 0;
+
     // för att få sin egen position
     private GoogleApiClient mGoogleApiClient;
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
     public static final String TAG = MapsActivity.class.getSimpleName();
     private Marker marker;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setSupportActionBar(toolbar);
 
         final ActionBar ab = getSupportActionBar();
-        if(ab != null){
+        if (ab != null) {
             ab.setHomeAsUpIndicator(R.drawable.ic_menu_white_48dp);
             ab.setDisplayHomeAsUpEnabled(true);
         }
@@ -69,26 +87,31 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.mapOld);
         mMapFragment.getMapAsync(this);
 
-        Button button = (Button)findViewById(R.id.button);
+        Button button = (Button) findViewById(R.id.button);
         button.setOnClickListener(this);
-
-        // egen position
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-
-
-        // Create the LocationRequest object
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10 * 1000)        // 10 seconds, in milliseconds
-                .setFastestInterval(1000); // 1 second, in milliseconds */
-
+        //set text textview
+        tv = (TextView) findViewById(R.id.distance);
 
         setTitle(R.string.title_activity_maps);
+
+        // egen position
+        // Create the LocationRequest object
+
+        if (!isGooglePlayServicesAvailable()) {
+            finish();
+        }
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(0);// 1 seconds, in milliseconds
+        mLocationRequest.setFastestInterval(0);// 1 second, in milliseconds
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        // google client
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -116,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
-                        switch (menuItem.getItemId()){
+                        switch (menuItem.getItemId()) {
                             case R.id.navigation_item_map:
                                 fragmentTransaction
                                         .show(mMapFragment)
@@ -152,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 fragmentTransaction.commit();
                                 return true;
                             default:
-                                Toast.makeText(getApplicationContext(),"Somethings Wrong",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
                                 return true;
                         }
                     }
@@ -184,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        } else if(id == R.id.navigation_item_map){
+        } else if (id == R.id.navigation_item_map) {
             Toast.makeText(MainActivity.this, " Nav", Toast.LENGTH_SHORT).show();
         }
 
@@ -198,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             FragmentManager fm = getSupportFragmentManager();
             int backCount = fm.getBackStackEntryCount();
-            if(backCount > 0)
+            if (backCount > 0)
                 fm.popBackStack();
             else
                 super.onBackPressed();
@@ -226,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -240,108 +264,63 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
            /* if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {*/
 
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
+            // Show an expanation to the user *asynchronously* -- don't block
+            // this thread waiting for the user's response! After the user
+            // sees the explanation, try again to request the permission.
 
 
+            // No explanation needed, we can request the permission.
 
-                // No explanation needed, we can request the permission.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_FINE_LOCATION);
 
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_FINE_LOCATION);
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_COARSE_LOCATION);
 
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_COARSE_LOCATION);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
+            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
 
         }
         mMap.setMyLocationEnabled(true);
 
     }
 
-    //egen position
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.i(TAG, "Location services connected.");
-
-
-    }
-
-    private void handleNewLocation(Location location) {
-        if(marker == null){
-        }else{
-            marker.remove();
-        }
-        Log.d(TAG, location.toString());
-        double currentLatitude = location.getLatitude();
-        double currentLongitude = location.getLongitude();
-        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
-
-        // marker for current position
-
-        MarkerOptions options = new MarkerOptions()
-                .position(latLng)
-                .title("Your bike");
-        marker = mMap.addMarker(options);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        Log.i(TAG, "updates borta");
-    }
-
-    public void removeMarker(){
-        marker.remove();
-    }
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Location services suspended. Please reconnect.");
-
-    }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart");
         mGoogleApiClient.connect();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if (mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
-        }
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop fired ");
+        mGoogleApiClient.disconnect();
+        Log.d(TAG, "isConnected ...............: " + mGoogleApiClient.isConnected());
     }
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        if (connectionResult.hasResolution()) {
-            try {
-                // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-            } catch (IntentSender.SendIntentException e) {
-                e.printStackTrace();
-            }
+    private boolean isGooglePlayServicesAvailable() {
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (ConnectionResult.SUCCESS == status) {
+            return true;
         } else {
-            Log.i(TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
+            GooglePlayServicesUtil.getErrorDialog(status, this, 0).show();
+            return false;
         }
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-        handleNewLocation(location);
+    public void onConnected(Bundle bundle) {
+        Log.d(TAG, "onConnected - isConnected: " + mGoogleApiClient.isConnected());
+        startLocationUpdates();
     }
 
-
-    @Override
-    public void onClick(View v) {
-        Log.v(TAG,"hallå");
-
+    protected void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -352,12 +331,124 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location == null) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        } else {
-            handleNewLocation(location);
+        PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+        Log.d(TAG, "Location update started ..............: ");
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.d(TAG, "Connection failed: " + connectionResult.toString());
+    }
+    @Override
+    public void onLocationChanged(Location location) {
+        handleNewLocation(location);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
+        Log.d(TAG, "Location update stopped");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mGoogleApiClient.isConnected()) {
+            startLocationUpdates();
+            Log.d(TAG, "Location update resumed");
         }
+    }
+
+    private void handleNewLocation(Location location) {
+        Log.d(TAG, location.toString());
+        currentLatitude = location.getLatitude();
+        currentLongitude = location.getLongitude();
+
+
+        // marker for current position
+        if (enableUpdates) {
+            if (marker == null) {
+            } else {
+                marker.remove();
+            }
+
+            markerLatitude = currentLatitude;
+            markerLongitude = currentLongitude;
+            LatLng latLng = new LatLng(markerLatitude, markerLongitude);
+            MarkerOptions options = new MarkerOptions()
+                    .position(latLng)
+                    .title("Your bike");
+            marker = mMap.addMarker(options);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            Log.i(TAG, "put marker");
+            enableUpdates = false;
+        }
+        //display distance
+
+        if (markerLatitude == 0 && markerLongitude == 0) {
+            tv.setText("Bike is not parked");
+        } else {
+            tv.setText("Distance: " + distance(markerLatitude, markerLongitude, 0, 0) + " m");
+            Log.v("Tag", "updates");
+        }
+    }
+
+    public String distance(double lat, double lon, double el1, double el2) {
+
+        final int R = 6371; // Radius of the earth
+
+        Double latDistance = Math.toRadians(lat - currentLatitude);
+        Double lonDistance = Math.toRadians(lon - currentLongitude);
+        Double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(currentLatitude)) * Math.cos(Math.toRadians(lat))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+        double height = el1 - el2;
+        distance = Math.pow(distance, 2) + Math.pow(height, 2);
+        distance = Math.sqrt(distance);
+
+        if (distance <= 1) {
+            vibrate(100);
+        } else if (distance <= 5) {
+            vibrate(200);
+        } else if (distance <= 10) {
+            vibrate(300);
+        } else if (distance <= 25) {
+            vibrate(400);
+        } else if (distance <= 50) {
+            vibrate(500);
+        } else {
+
+        }
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        String distance2 = df.format(distance);
+        return distance2;
+    }
+
+    public void vibrate(int ms) {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        long[] pattern = {0, ms, ms, ms};
+        v.vibrate(pattern, -1);
+    }
+
+    @Override
+    public void onClick(View v) {
+        enableUpdates = true;
     }
 
 }
