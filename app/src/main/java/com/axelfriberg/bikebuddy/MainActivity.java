@@ -394,7 +394,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         currentLongitude = location.getLongitude();
         counter ++;
 
-
         // marker for current position
         if (enableUpdates) {
             if (marker == null) {
@@ -440,6 +439,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
         distance = Math.sqrt(distance);
     if (enableVibration && counter == 5) {
+        Log.v(TAG, "vibrates");
          if (distance <= 1) {
              vibrate(100);
             } else if (distance <= 5) {
@@ -471,11 +471,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (v.getId() == R.id.mark_button) {
             enableUpdates = true;
             enableVibration= true;
+            counter = 0;
         } else if (v.getId() == R.id.remove_button) {
             if (marker == null) {
-                Log.v("hej", "null markör" );
             } else {
-                Log.v("hej", "null ej markör" );
                 marker.remove();
                 enableVibration= false;
                 enableUpdates = false;
