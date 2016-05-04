@@ -470,6 +470,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onClick(View v) {
         if (v.getId() == R.id.mark_button) {
             enableUpdates = true;
+            enableVibration= true;
         } else if (v.getId() == R.id.remove_button) {
             if (marker == null) {
                 Log.v("hej", "null markör" );
