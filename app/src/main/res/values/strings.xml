@@ -15,4 +15,5 @@
     <string name="navigation_item_lock">Lock</string>
     <string name="title_activity_maps">Map</string>
     <string name="navigation_notification">Notification</string>
+    <string name="edit_message">Enter your friendcode</string>
 </resources>
