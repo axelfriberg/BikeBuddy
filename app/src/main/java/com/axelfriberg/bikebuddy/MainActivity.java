@@ -1,19 +1,17 @@
 package com.axelfriberg.bikebuddy;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
-
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Vibrator;
-import android.support.v4.app.FragmentTransaction;
-
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -32,6 +30,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -42,8 +41,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import com.google.android.gms.common.api.Status;
 
 import java.text.DecimalFormat;
 
@@ -223,6 +220,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         } else if (id == R.id.navigation_item_map) {
             Toast.makeText(MainActivity.this, " Nav", Toast.LENGTH_SHORT).show();
+        } else if(id == R.id.action_rfduino){
+            Intent intent = new Intent(this,RFduinoActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
