@@ -39,7 +39,7 @@
         android:inputType="numberPassword"
         android:ems="10"
         android:id="@+id/friendPassword"
-        android:layout_below="@+id/textView3"
+        android:layout_below="@+id/passwordTextView"
         android:layout_centerHorizontal="true" />
 
     <TextView
@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Friend password"
-        android:id="@+id/textView3"
+        android:id="@+id/passwordTextView"
         android:layout_below="@+id/lock_image"
         android:layout_centerHorizontal="true" />
 

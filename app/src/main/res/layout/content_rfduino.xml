@@ -14,7 +14,55 @@
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:baselineAligned="true">
+        android:baselineAligned="true"
+        android:gravity="center">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unlock"
+            android:id="@+id/button_lock"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_margin="20dp"
+            android:src="@drawable/lock_lock"
+            android:id="@+id/lock_image"
+
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="30sp"
+            android:text="Your bike is locked"
+            android:id="@+id/locked_text"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="42dp" />
+
+        <EditText
+            android:layout_width="150dp"
+            android:layout_height="30dp"
+            android:inputType="numberPassword"
+            android:ems="10"
+            android:id="@+id/friendPassword"
+            android:layout_below="@+id/passwordTextView"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Friend password"
+            android:id="@+id/passwordTextView"
+            android:layout_below="@+id/lock_image"
+            android:layout_centerHorizontal="true" />
 
         <TextView
             style="?android:attr/listSeparatorTextViewStyle"

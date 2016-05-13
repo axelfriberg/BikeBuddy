@@ -1,6 +1,5 @@
 package com.axelfriberg.bikebuddy;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -9,18 +8,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.UUID;
 
-public class RFduinoActivity extends Activity implements BluetoothAdapter.LeScanCallback {
+public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapter.LeScanCallback, View.OnClickListener, SensorEventListener {
+    private Button b;
+    private TextView locked;
+    private ImageView lockImage;
+    Sensor accelerometer;
+    SensorManager sm;
+    boolean yes;
+    EditText password;
+
     // State machine
     final private static int STATE_BLUETOOTH_OFF = 1;
     final private static int STATE_DISCONNECTED = 2;
@@ -106,6 +122,26 @@ public class RFduinoActivity extends Activity implements BluetoothAdapter.LeScan
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rfduino);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar ab = getSupportActionBar();
+
+        // Enable the Up button
+        ab.setDisplayHomeAsUpEnabled(true);
+
+        setTitle(R.string.navigation_item_lock);
+
+        sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+        accelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sm.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
+        b = (Button)findViewById(R.id.button_lock);
+        locked = (TextView)findViewById(R.id.locked_text);
+        lockImage = (ImageView)findViewById(R.id.lock_image);
+        b.setOnClickListener(this);
+        password = (EditText)findViewById(R.id.friendPassword);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -305,6 +341,57 @@ public class RFduinoActivity extends Activity implements BluetoothAdapter.LeScan
                 updateUi();
             }
         });
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (b.getText().equals("Unlock")) {
+            b.setText("Lock");
+            locked.setText("Your bike is unlocked");
+            lockImage.setImageResource(R.drawable.unlock_lock);
+
+
+        }else{
+            b.setText("Unlock");
+            locked.setText("Your bike is locked");
+            lockImage.setImageResource(R.drawable.lock_lock);
+
+        }
+
+    }
+
+    public void onResume(){
+        super.onResume();
+        setTitle(R.string.navigation_item_lock);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        float z = event.values[2];
+
+        if(z < -8 && yes == false){
+            if (b.getText().equals("Unlock")) {
+                b.setText("Lock");
+                locked.setText("Your bike is unlocked");
+                lockImage.setImageResource(R.drawable.unlock_lock);
+                rfduinoService.send(HexAsciiHelper.hexToBytes("008800"));
+            }else{
+                b.setText("Unlock");
+                locked.setText("Your bike is locked");
+                lockImage.setImageResource(R.drawable.lock_lock);
+                rfduinoService.send(HexAsciiHelper.hexToBytes("880000"));
+            }
+
+            yes = true;
+        }
+        if(z > 8 && yes == true){
+            yes = false;
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 
 }
