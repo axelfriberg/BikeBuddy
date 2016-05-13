@@ -1,33 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.axelfriberg.bikebuddy.NFCFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".NFCActivity">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Scan"
-        android:id="@+id/scan"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="43dp" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/push"
+
+        android:src="@drawable/scan2"
         android:id="@+id/scan_image"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Press button to scan bike"
+        android:text="Hold device against tag to scan"
         android:id="@+id/scan_text"
-        android:layout_alignParentTop="true"
+        android:padding="8dp"
+        android:textSize="24sp"
+        android:layout_above="@+id/scan_image"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="67dp" />
+        android:layout_marginBottom="30dp" />
 
 </RelativeLayout>

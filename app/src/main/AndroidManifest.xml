@@ -37,15 +37,14 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".AlarmActivity" />
-        <activity android:name=".NFCFragment">
-            <intent-filter>
                 <action android:name="android.nfc.action.TAG_DISCOVERED" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
+
+        <activity android:name=".AlarmActivity" />
+
         </activity>
 
         <!--
@@ -65,6 +64,15 @@
         <activity
             android:name=".RFduinoActivity"
             android:label="@string/title_activity_rfduino"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.axelfriberg.bikebuddy.MainActivity" />
+        </activity>
+        <activity
+            android:name=".NFCActivity"
+            android:label="@string/nfc_fragment_title"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
             <meta-data

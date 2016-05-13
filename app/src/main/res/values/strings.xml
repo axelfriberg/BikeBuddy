@@ -18,4 +18,5 @@
     <string name="edit_message">Enter your friendcode</string>
     <string name="title_activity_rfduino">RFDuinoActivity</string>
     <string name="action_rfduino">RFduino</string>
+    <string name="tag_write_error_undefined">error_undefined</string>
 </resources>

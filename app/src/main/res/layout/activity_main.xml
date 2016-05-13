@@ -56,17 +56,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|top"
-                android:text="Mark position"
-                android:padding="10dp"
-                android:layout_marginTop="10dp" />
+                android:text="Park bike"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"/>
             <Button
                 android:id="@+id/remove_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Unpark bike"
                 android:layout_gravity="center|top"
-                android:text="Remove marker"
-                android:padding="10dp"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"/>
+            <ImageButton
+                android:id="@+id/rotate_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="end|top"
+                android:src="@drawable/compass"
+                android:background="@drawable/compass"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"

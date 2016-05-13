@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -22,7 +26,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,14 +44,17 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.DecimalFormat;
 
+
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener, SensorEventListener {
     private static final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 150;
     private static final int MY_PERMISSIONS_REQUEST_COARSE_LOCATION = 151;
     private NavigationView mNavigationView;
@@ -58,19 +67,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean enableVibration;
     private Button button1;
     private Button button2;
+    private ImageButton button3;
     private int counter = 0;
-
+    private float currentDegree = 0f;
+    private SensorManager mSensorManager;
+    private boolean markerReady = false;
     private double currentLatitude;
     private double currentLongitude;
     private double markerLatitude;
     private double markerLongitude;
+    double distance;
+    double distanceLong;
+    private LatLng latLng2;
+    private boolean rotateView = false;
+    private boolean zoom = true;
+    private boolean dot = true;
 
 
-    // för att få sin egen position
+    // get position of yourself
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     public static final String TAG = MapsActivity.class.getSimpleName();
     private Marker marker;
+    private Marker position;
 
     //Save data to shared preferences
     private SharedPreferences activityPreferences;
@@ -90,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mMapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapOld);
@@ -97,8 +117,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         button1 = (Button) findViewById(R.id.mark_button);
         button2 = (Button) findViewById(R.id.remove_button);
+        button3 = (ImageButton) findViewById(R.id.rotate_button);
         button1.setOnClickListener(this);
         button2.setOnClickListener(this);
+        button3.setOnClickListener(this);
         //set text textview
         tv = (TextView) findViewById(R.id.distance);
 
@@ -122,7 +144,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .addOnConnectionFailedListener(this)
                 .build();
 
-
+        // initialize your android device sensor capabilities
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -158,12 +181,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 setTitle(R.string.title_activity_maps);
                                 return true;
                             case R.id.navigation_item_nfc:
-                                NFCFragment nfcFragment = new NFCFragment();
-                                fragmentTransaction
-                                        .hide(mMapFragment)
-                                        .replace(R.id.frame, nfcFragment)
-                                        .addToBackStack(null)
-                                        .commit();
+
+                                Intent intent2 = new Intent(MainActivity.this, NFCActivity.class);
+                                startActivity(intent2);
                                 return true;
                             case R.id.navigation_item_lock:
                                 LockFragment lockFragment = new LockFragment();
@@ -181,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 return true;
                             case R.id.navigation_item_notification:
                                 NotificationFragment notificationFragment = new NotificationFragment();
-                                fragmentTransaction.replace(R.id.frame,notificationFragment);
+                                fragmentTransaction.replace(R.id.frame, notificationFragment);
                                 fragmentTransaction.addToBackStack(null);
                                 fragmentTransaction.commit();
                                 return true;
@@ -220,11 +240,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         } else if (id == R.id.navigation_item_map) {
             Toast.makeText(MainActivity.this, " Nav", Toast.LENGTH_SHORT).show();
-        } else if(id == R.id.action_rfduino){
-            Intent intent = new Intent(this,RFduinoActivity.class);
+        } else if (id == R.id.action_rfduino) {
+            Intent intent = new Intent(this, RFduinoActivity.class);
             startActivity(intent);
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -298,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // result of the request.
 
         }
-        mMap.setMyLocationEnabled(true);
+
 
     }
 
@@ -359,6 +378,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "Connection failed: " + connectionResult.toString());
     }
+
     @Override
     public void onLocationChanged(Location location) {
         handleNewLocation(location);
@@ -369,6 +389,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onPause() {
         super.onPause();
         stopLocationUpdates();
+        // to stop the listener and save battery
+        mSensorManager.unregisterListener(this);
     }
 
     protected void stopLocationUpdates() {
@@ -380,7 +402,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onResume() {
         super.onResume();
-
+        Log.d(TAG, "onResume Main");
+        // for the system's orientation sensor registered listeners
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                SensorManager.SENSOR_DELAY_GAME);
         if (mGoogleApiClient.isConnected()) {
             startLocationUpdates();
             Log.d(TAG, "Location update resumed");
@@ -392,9 +417,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Log.d(TAG, location.toString());
         currentLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
-        counter ++;
+        counter++;
+        //display current position
 
-        // marker for current position
+       if (position == null) {
+        } else {
+            position.remove();
+        }
+
+        latLng2 = new LatLng(currentLatitude, currentLongitude);
+        MarkerOptions options2 = new MarkerOptions()
+                .position(latLng2);
+
+        position = mMap.addMarker(options2
+                .position(latLng2));
+        if (dot){
+            position.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.dot));
+        } else{
+            position.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon));
+        }
+
+        markerReady = true;
+        // Move the camera instantly to location with a zoom of 17.
+        if (zoom){
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 17));
+            zoom = false;
+        }
+
+        // marker for bike position
         if (enableUpdates) {
             if (marker == null) {
             } else {
@@ -434,27 +484,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 + Math.cos(Math.toRadians(currentLatitude)) * Math.cos(Math.toRadians(lat))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
+        distance = R * c * 1000; // convert to meters
         double height = el1 - el2;
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
         distance = Math.sqrt(distance);
-    if (enableVibration && counter == 5) {
-        Log.v(TAG, "vibrates");
-         if (distance <= 1) {
-             vibrate(100);
+        if (enableVibration && counter == 5) {
+            Log.v(TAG, "vibrates");
+            if (distance <= 1) {
+                vibrate(100);
             } else if (distance <= 5) {
-             vibrate(200);
+                vibrate(200);
             } else if (distance <= 10) {
-              vibrate(300);
-         } else if (distance <= 25) {
-             vibrate(400);
+                vibrate(300);
+            } else if (distance <= 25) {
+                vibrate(400);
             } else if (distance <= 50) {
-             vibrate(500);
+                vibrate(500);
             } else {
 
             }
-        counter = 0;
-    }
+            counter = 0;
+        }
         DecimalFormat df = new DecimalFormat("#.##");
         String distance2 = df.format(distance);
         return distance2;
@@ -466,24 +516,62 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         v.vibrate(pattern, -1);
     }
 
+
     @Override
     public void onClick(View v) {
+
         if (v.getId() == R.id.mark_button) {
             enableUpdates = true;
-            enableVibration= true;
+            enableVibration = true;
             counter = 0;
         } else if (v.getId() == R.id.remove_button) {
             if (marker == null) {
             } else {
                 marker.remove();
-                enableVibration= false;
+                enableVibration = false;
                 enableUpdates = false;
                 tv.setText("Bike is not parked");
             }
             markerLatitude = 0;
             markerLongitude = 0;
-        }
+        } else if (v.getId() == R.id.rotate_button) {
+            if (rotateView) {
+                zoom = true;
+                updateCamera(0f);
+                rotateView = false;
+                position.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.dot));
+                dot = true;
+                }
+            else {
+                rotateView = true;
+                zoom = true;
+                position.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon));
+                dot = false;
+        }}
     }
 
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if(markerReady && rotateView){
+        // get the angle around the z-axis rotated
+        float degree = Math.round(event.values[0]);
+       // position.setRotation(degree);
+            updateCamera(degree);
+        currentDegree = -degree;
+    }}
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // not in use
+    }
+
+    private void updateCamera(final Float bearing) {
+
+            CameraPosition pos = CameraPosition.builder().zoom(mMap.getCameraPosition().zoom).target(latLng2).bearing(bearing).build();
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
+
+
+
+    }
 }
