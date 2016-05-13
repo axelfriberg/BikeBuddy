@@ -274,7 +274,8 @@ public class RFduinoActivity extends Activity implements BluetoothAdapter.LeScan
         View view = getLayoutInflater().inflate(android.R.layout.simple_list_item_2, dataLayout, false);
 
         TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-        text1.setText(HexAsciiHelper.bytesToHex(data));
+        String s = HexAsciiHelper.bytesToHex(data);
+        text1.setText(s);
 
         String ascii = HexAsciiHelper.bytesToAsciiMaybe(data);
         if (ascii != null) {
@@ -284,6 +285,11 @@ public class RFduinoActivity extends Activity implements BluetoothAdapter.LeScan
 
         dataLayout.addView(
                 view, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        if(s.compareTo("01") == 0){
+            Intent intent = new Intent(this,AlarmActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override
