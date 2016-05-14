@@ -31,7 +31,8 @@
         android:id="@+id/locked_text"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp" />
+        android:layout_marginTop="42dp"
+        android:textColor="#32f115" />
 
     <EditText
         android:layout_width="150dp"

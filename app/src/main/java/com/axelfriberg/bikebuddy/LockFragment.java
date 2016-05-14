@@ -2,12 +2,17 @@ package com.axelfriberg.bikebuddy;
 
 
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +29,12 @@ public class LockFragment extends Fragment implements View.OnClickListener, Sens
     private Button b;
     private TextView locked;
     private ImageView lockImage;
-    Sensor accelerometer;
-    SensorManager sm;
-    boolean yes;
-    EditText password;
+    private Sensor accelerometer;
+    private SensorManager sm;
+    private boolean yes;
+    private EditText password;
+    private MediaPlayer mediaPlayer1;
+    private MediaPlayer mediaPlayer2;
 
     public LockFragment() {
 
@@ -39,6 +46,9 @@ public class LockFragment extends Fragment implements View.OnClickListener, Sens
         sm = (SensorManager)getActivity().getSystemService(getActivity().SENSOR_SERVICE);
         accelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sm.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mediaPlayer1 = MediaPlayer.create(this.getContext(), R.raw.your_bike_is_locked);
+        mediaPlayer2 = MediaPlayer.create(this.getContext(), R.raw.your_bike_is_unlocked);
+
     }
 
     @Override
@@ -60,13 +70,17 @@ public class LockFragment extends Fragment implements View.OnClickListener, Sens
     public void onClick(View view) {
         if (b.getText().equals("Unlock")) {
             b.setText("Lock");
+            mediaPlayer2.start();
             locked.setText("Your bike is unlocked");
+            locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.red));
             lockImage.setImageResource(R.drawable.unlock_lock);
 
 
         }else{
             b.setText("Unlock");
+            mediaPlayer1.start();
             locked.setText("Your bike is locked");
+            locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.green));
             lockImage.setImageResource(R.drawable.lock_lock);
 
         }
@@ -85,12 +99,16 @@ public class LockFragment extends Fragment implements View.OnClickListener, Sens
             if(z < -8 && yes == false){
                 if (b.getText().equals("Unlock")) {
                     b.setText("Lock");
+                    mediaPlayer2.start();
                     locked.setText("Your bike is unlocked");
+                    locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.red));
                     lockImage.setImageResource(R.drawable.unlock_lock);
 
                 }else{
                     b.setText("Unlock");
+                    mediaPlayer1.start();
                     locked.setText("Your bike is locked");
+                    locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.green));
                     lockImage.setImageResource(R.drawable.lock_lock);
                 }
 
