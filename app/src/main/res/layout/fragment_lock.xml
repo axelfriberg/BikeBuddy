@@ -32,7 +32,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="42dp"
-        android:textColor="#32f115" />
+        android:textColor="#f92e1b" />
 
     <EditText
         android:layout_width="150dp"
