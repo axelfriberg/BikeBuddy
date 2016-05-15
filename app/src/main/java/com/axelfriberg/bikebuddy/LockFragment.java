@@ -72,7 +72,7 @@ public class LockFragment extends Fragment implements View.OnClickListener, Sens
             b.setText("Lock");
             mediaPlayer2.start();
             locked.setText("Your bike is unlocked");
-            locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.red));
+            locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.green));
             lockImage.setImageResource(R.drawable.unlock_lock);
 
 
@@ -80,7 +80,7 @@ public class LockFragment extends Fragment implements View.OnClickListener, Sens
             b.setText("Unlock");
             mediaPlayer1.start();
             locked.setText("Your bike is locked");
-            locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.green));
+            locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.red));
             lockImage.setImageResource(R.drawable.lock_lock);
 
         }
@@ -101,14 +101,14 @@ public class LockFragment extends Fragment implements View.OnClickListener, Sens
                     b.setText("Lock");
                     mediaPlayer2.start();
                     locked.setText("Your bike is unlocked");
-                    locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.red));
+                    locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.green));
                     lockImage.setImageResource(R.drawable.unlock_lock);
 
                 }else{
                     b.setText("Unlock");
                     mediaPlayer1.start();
                     locked.setText("Your bike is locked");
-                    locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.green));
+                    locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.red));
                     lockImage.setImageResource(R.drawable.lock_lock);
                 }
 
