@@ -15,6 +15,7 @@ import android.support.design.widget.NavigationView;
 
 import android.support.v4.widget.DrawerLayout;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -45,6 +46,11 @@ public class NFCActivity extends AppCompatActivity {
         setTitle(R.string.nfc_fragment_title);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        ActionBar ab = getSupportActionBar();
+
+        // Enable the Up button
+        ab.setDisplayHomeAsUpEnabled(true);
 
         nfcMger = new NFCManager(this);
         Log.v("NFC", "onCreate");
