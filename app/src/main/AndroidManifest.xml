@@ -43,7 +43,6 @@
             </intent-filter>
 
 
-        <activity android:name=".AlarmActivity" />
 
         </activity>
 
@@ -79,6 +78,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.axelfriberg.bikebuddy.MainActivity" />
         </activity>
+        <activity android:name=".AlarmActivity" />
     </application>
 
 </manifest>
