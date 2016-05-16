@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
     tools:context=".StatisticFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -9,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/sf_text"
-        android:text="@string/hello_blank_fragment" />
+        android:text="@string/statistics_text" />
 
     <ListView
         android:layout_width="wrap_content"

@@ -199,12 +199,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         .addToBackStack(null)
                                         .commit();
                                 return true;
-                            case R.id.navigation_item_notification:
-                                NotificationFragment notificationFragment = new NotificationFragment();
-                                fragmentTransaction.replace(R.id.frame, notificationFragment);
-                                fragmentTransaction.addToBackStack(null);
-                                fragmentTransaction.commit();
-                                return true;
                             default:
                                 Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
                                 return true;
@@ -236,11 +230,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.navigation_item_map) {
-            Toast.makeText(MainActivity.this, " Nav", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.action_rfduino) {
+        if (id == R.id.action_rfduino) {
             Intent intent = new Intent(this, RFduinoActivity.class);
             startActivity(intent);
         }
@@ -420,9 +410,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         counter++;
         //display current position
 
-       if (position == null) {
-        } else {
-            position.remove();
+       if (position != null) {
+           position.remove();
         }
 
         latLng2 = new LatLng(currentLatitude, currentLongitude);
@@ -446,8 +435,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // marker for bike position
         if (enableUpdates) {
-            if (marker == null) {
-            } else {
+            if (marker != null) {
                 marker.remove();
             }
 
@@ -500,14 +488,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 vibrate(400);
             } else if (distance <= 50) {
                 vibrate(500);
-            } else {
-
             }
             counter = 0;
         }
         DecimalFormat df = new DecimalFormat("#.##");
-        String distance2 = df.format(distance);
-        return distance2;
+        return df.format(distance);
     }
 
     public void vibrate(int ms) {
@@ -525,8 +510,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             enableVibration = true;
             counter = 0;
         } else if (v.getId() == R.id.remove_button) {
-            if (marker == null) {
-            } else {
+            if (marker != null) {
                 marker.remove();
                 enableVibration = false;
                 enableUpdates = false;

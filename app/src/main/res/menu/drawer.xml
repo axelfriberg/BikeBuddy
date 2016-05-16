@@ -18,10 +18,6 @@
             android:id="@+id/navigation_item_statistics"
             android:title="Statistics"
             android:icon="@drawable/ic_timeline_black_48dp"/>
-        <item
-            android:id="@+id/navigation_item_notification"
-            android:title="Notification"
-            />
 
     </group>
 </menu>
