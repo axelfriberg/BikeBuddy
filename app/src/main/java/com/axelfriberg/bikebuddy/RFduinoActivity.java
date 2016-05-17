@@ -190,6 +190,8 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         });
 
         dataLayout = (LinearLayout) findViewById(R.id.dataLayout);
+
+
     }
 
     @Override
@@ -425,6 +427,15 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
             Intent intent = new Intent(this,AlarmActivity.class);
             startActivity(intent);
         }
+    }
+
+    private void scanAndConnect(){
+        scanStarted = true;
+        bluetoothAdapter.startLeScan(
+                new UUID[]{ RFduinoService.UUID_SERVICE },
+                RFduinoActivity.this);
+        Intent rfduinoIntent = new Intent(RFduinoActivity.this, RFduinoService.class);
+        bindService(rfduinoIntent, rfduinoServiceConnection, BIND_AUTO_CREATE);
     }
 }
 
