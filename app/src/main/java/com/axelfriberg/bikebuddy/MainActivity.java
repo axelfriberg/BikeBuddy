@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Button button2;
     private ImageButton button3;
     private int counter = 0;
-    private float currentDegree = 0f;
     private SensorManager mSensorManager;
     private boolean markerReady = false;
     private double currentLatitude;
@@ -77,11 +76,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private double markerLatitude;
     private double markerLongitude;
     double distance;
-    double distanceLong;
     private LatLng latLng2;
     private boolean rotateView = false;
     private boolean zoom = true;
-    private boolean dot = true;
+    private boolean markerEnabled = false;
 
 
     // get position of yourself
@@ -305,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // result of the request.
 
         }
-
+        mMap.setMyLocationEnabled(true);
 
     }
 
@@ -408,8 +406,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         counter++;
         //display current position
 
-       if (position != null) {
-           position.remove();
+        if (position != null) {
+            position.remove();
         }
 
         latLng2 = new LatLng(currentLatitude, currentLongitude);
@@ -418,16 +416,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         position = mMap.addMarker(options2
                 .position(latLng2));
-        if (dot){
-            position.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.dot));
-        } else{
             position.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon));
+        if (!markerEnabled){
+            position.setVisible(false);
         }
 
         markerReady = true;
         // Move the camera instantly to location with a zoom of 17.
-        if (zoom){
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 17));
+        if (zoom) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 17));
             zoom = false;
         }
 
@@ -517,18 +514,31 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             markerLatitude = 0;
             markerLongitude = 0;
         } else if (v.getId() == R.id.rotate_button) {
-            if (rotateView) {
+            if (rotateView) { //turn off rotate view
                 zoom = true;
                 updateCamera(0f);
                 rotateView = false;
-                position.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.dot));
-                dot = true;
-                }
-            else {
+                mMap.setMyLocationEnabled(true);
+                position.setVisible(false);
+                markerEnabled = false;
+
+            } else { // turn on rotate view
                 rotateView = true;
                 zoom = true;
-                position.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon));
-                dot = false;
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                mMap.setMyLocationEnabled(false);
+                position.setVisible(true);
+                markerEnabled = true;
+
         }}
     }
 
@@ -538,9 +548,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(markerReady && rotateView){
         // get the angle around the z-axis rotated
         float degree = Math.round(event.values[0]);
-       // position.setRotation(degree);
             updateCamera(degree);
-        currentDegree = -degree;
+
     }}
 
     @Override
