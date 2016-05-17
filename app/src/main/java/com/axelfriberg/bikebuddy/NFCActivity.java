@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.MediaPlayer;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -31,12 +32,14 @@ import java.io.IOException;
 import java.util.Locale;
 
 public class NFCActivity extends AppCompatActivity {
-    NFCManager nfcMger;
-    String id = "My bike";
-    NdefMessage message;
-    boolean writeable = false;
-    TextView tv;
-    ImageView image;
+    private NFCManager nfcMger;
+    private String id = "My bike";
+    private NdefMessage message;
+    private boolean writeable = false;
+    private  TextView tv;
+    private ImageView image;
+    private MediaPlayer mp1;
+    private MediaPlayer mp2;
 
 
     @Override
@@ -53,11 +56,14 @@ public class NFCActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
 
         nfcMger = new NFCManager(this);
+
         Log.v("NFC", "onCreate");
         message = createTextMessage(id);
         tv = (TextView) findViewById(R.id.scan_text);
         image = (ImageView) findViewById(R.id.scan_image);
         tv.setText("Hold device against tag to scan");
+         mp1 = MediaPlayer.create(this, R.raw.fail_sound);
+        mp2 = MediaPlayer.create(this, R.raw.success_sound);
     }
 
         @Override
@@ -76,6 +82,8 @@ public class NFCActivity extends AppCompatActivity {
                 };
                 NfcAdapter nfcAdpt = NfcAdapter.getDefaultAdapter(this);
                 nfcAdpt.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, techList);
+
+
 
             } catch (IOException nfcnsup) {
                 Toast.makeText(getApplicationContext(), "NFC Not supported/enabled", Toast.LENGTH_SHORT).show();
@@ -186,9 +194,11 @@ public class NFCActivity extends AppCompatActivity {
                 if (text.equals(id)){
                     tv.setText("This is your bike!");
                     image.setImageResource(R.drawable.check);
+                    mp2.start();
                 }else{
                     tv.setText("This is not your bike!");
                     image.setImageResource(R.drawable.cross);
+                    mp1.start();
                 }
 
             }
