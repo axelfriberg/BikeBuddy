@@ -16,10 +16,11 @@
     <ImageView
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_margin="20dp"
         android:src="@drawable/lock_lock"
         android:id="@+id/lock_image"
 
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
     <TextView
@@ -31,17 +32,18 @@
         android:id="@+id/locked_text"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
-        android:textColor="#f92e1b" />
+        android:layout_marginTop="42dp" />
 
     <EditText
         android:layout_width="150dp"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:inputType="numberPassword"
         android:ems="10"
         android:id="@+id/friendPassword"
+        android:gravity="center_horizontal"
         android:layout_below="@+id/passwordTextView"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"

@@ -68,11 +68,12 @@ public class LockFragment extends Fragment implements View.OnClickListener, Sens
 
     @Override
     public void onClick(View view) {
+
         if (b.getText().equals("Unlock")) {
             b.setText("Lock");
             mediaPlayer2.start();
             locked.setText("Your bike is unlocked");
-            locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.green));
+
             lockImage.setImageResource(R.drawable.unlock_lock);
 
 
@@ -80,7 +81,7 @@ public class LockFragment extends Fragment implements View.OnClickListener, Sens
             b.setText("Unlock");
             mediaPlayer1.start();
             locked.setText("Your bike is locked");
-            locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.red));
+
             lockImage.setImageResource(R.drawable.lock_lock);
 
         }
@@ -101,23 +102,44 @@ public class LockFragment extends Fragment implements View.OnClickListener, Sens
                     b.setText("Lock");
                     mediaPlayer2.start();
                     locked.setText("Your bike is unlocked");
-                    locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.green));
                     lockImage.setImageResource(R.drawable.unlock_lock);
 
                 }else{
                     b.setText("Unlock");
                     mediaPlayer1.start();
                     locked.setText("Your bike is locked");
-                    locked.setTextColor(ContextCompat.getColor(this.getContext(),R.color.red));
+
                     lockImage.setImageResource(R.drawable.lock_lock);
                 }
 
                 yes = true;
+
             }
             if(z > 8 && yes == true){
                 yes = false;
             }
+
         }
+
+
+    private void stopPlaying() {
+        if (mediaPlayer1 != null ) {
+            mediaPlayer1.stop();
+            mediaPlayer1.release();
+            mediaPlayer1 = null;
+        }
+        if(mediaPlayer2 !=null){
+            mediaPlayer2.stop();
+            mediaPlayer2.release();
+            mediaPlayer2 = null;
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        sm.unregisterListener(this);
+    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
