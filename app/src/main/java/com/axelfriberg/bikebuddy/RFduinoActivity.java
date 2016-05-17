@@ -21,10 +21,12 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.util.UUID;
 
@@ -32,10 +34,12 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
     private Button b;
     private TextView locked;
     private ImageView lockImage;
+    private ToggleButton devButton;
     Sensor accelerometer;
     SensorManager sm;
     boolean yes;
     EditText password;
+    private boolean alarmActivated;
 
     // State machine
     final private static int STATE_BLUETOOTH_OFF = 1;
@@ -65,58 +69,7 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
     private Button clearButton;
     private LinearLayout dataLayout;
 
-    private final BroadcastReceiver bluetoothStateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
-            if (state == BluetoothAdapter.STATE_ON) {
-                upgradeState(STATE_DISCONNECTED);
-            } else if (state == BluetoothAdapter.STATE_OFF) {
-                downgradeState(STATE_BLUETOOTH_OFF);
-            }
-        }
-    };
 
-    private final BroadcastReceiver scanModeReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            scanning = (bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_NONE);
-            scanStarted &= scanning;
-            updateUi();
-        }
-    };
-
-    private final ServiceConnection rfduinoServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            rfduinoService = ((RFduinoService.LocalBinder) service).getService();
-            if (rfduinoService.initialize()) {
-                if (rfduinoService.connect(bluetoothDevice.getAddress())) {
-                    upgradeState(STATE_CONNECTING);
-                }
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            rfduinoService = null;
-            downgradeState(STATE_DISCONNECTED);
-        }
-    };
-
-    private final BroadcastReceiver rfduinoReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            if (RFduinoService.ACTION_CONNECTED.equals(action)) {
-                upgradeState(STATE_CONNECTED);
-            } else if (RFduinoService.ACTION_DISCONNECTED.equals(action)) {
-                downgradeState(STATE_DISCONNECTED);
-            } else if (RFduinoService.ACTION_DATA_AVAILABLE.equals(action)) {
-                addData(intent.getByteArrayExtra(RFduinoService.EXTRA_DATA));
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +91,16 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         sm.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
         b = (Button)findViewById(R.id.button_lock);
+        ToggleButton toggle = (ToggleButton) findViewById(R.id.dev_button);
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    findViewById(R.id.rfduino_layout).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.rfduino_layout).setVisibility(View.GONE);
+                }
+            }
+        });
         locked = (TextView)findViewById(R.id.locked_text);
         lockImage = (ImageView)findViewById(R.id.lock_image);
         b.setOnClickListener(this);
@@ -238,6 +201,7 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         registerReceiver(rfduinoReceiver, RFduinoService.getIntentFilter());
 
         updateState(bluetoothAdapter.isEnabled() ? STATE_DISCONNECTED : STATE_BLUETOOTH_OFF);
+        sm.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -249,7 +213,141 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         unregisterReceiver(scanModeReceiver);
         unregisterReceiver(bluetoothStateReceiver);
         unregisterReceiver(rfduinoReceiver);
+        alarmActivated = false;
+        sm.unregisterListener(this);
     }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        alarmActivated = false;
+        sm.unregisterListener(this);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        sm.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        setTitle(R.string.navigation_item_lock);
+    }
+
+
+    @Override
+    public void onLeScan(BluetoothDevice device, final int rssi, final byte[] scanRecord) {
+        bluetoothAdapter.stopLeScan(this);
+        bluetoothDevice = device;
+
+        RFduinoActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                deviceInfoText.setText(
+                        BluetoothHelper.getDeviceInfoText(bluetoothDevice, rssi, scanRecord));
+                updateUi();
+            }
+        });
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (b.getText().equals("Unlock")) {
+            b.setText("Lock");
+            locked.setText("Your bike is unlocked");
+            lockImage.setImageResource(R.drawable.unlock_lock);
+
+
+        }else{
+            b.setText("Unlock");
+            locked.setText("Your bike is locked");
+            lockImage.setImageResource(R.drawable.lock_lock);
+
+        }
+
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        float z = event.values[2];
+
+        if(z < -8 && yes == false){
+            if (b.getText().equals("Unlock")) {
+                b.setText("Lock");
+                locked.setText("Your bike is unlocked");
+                lockImage.setImageResource(R.drawable.unlock_lock);
+                if(rfduinoService != null)
+                    rfduinoService.send(HexAsciiHelper.hexToBytes("008800"));
+            }else{
+                b.setText("Unlock");
+                locked.setText("Your bike is locked");
+                lockImage.setImageResource(R.drawable.lock_lock);
+                if(rfduinoService != null)
+                    rfduinoService.send(HexAsciiHelper.hexToBytes("880000"));
+            }
+
+            yes = true;
+        }
+        if(z > 8 && yes == true){
+            yes = false;
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+
+    }
+
+    private final BroadcastReceiver bluetoothStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
+            if (state == BluetoothAdapter.STATE_ON) {
+                upgradeState(STATE_DISCONNECTED);
+            } else if (state == BluetoothAdapter.STATE_OFF) {
+                downgradeState(STATE_BLUETOOTH_OFF);
+            }
+        }
+    };
+
+    private final BroadcastReceiver scanModeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            scanning = (bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_NONE);
+            scanStarted &= scanning;
+            updateUi();
+        }
+    };
+
+    private final ServiceConnection rfduinoServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            rfduinoService = ((RFduinoService.LocalBinder) service).getService();
+            if (rfduinoService.initialize()) {
+                if (rfduinoService.connect(bluetoothDevice.getAddress())) {
+                    upgradeState(STATE_CONNECTING);
+                }
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            rfduinoService = null;
+            downgradeState(STATE_DISCONNECTED);
+        }
+    };
+
+    private final BroadcastReceiver rfduinoReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (RFduinoService.ACTION_CONNECTED.equals(action)) {
+                upgradeState(STATE_CONNECTED);
+            } else if (RFduinoService.ACTION_DISCONNECTED.equals(action)) {
+                downgradeState(STATE_DISCONNECTED);
+            } else if (RFduinoService.ACTION_DATA_AVAILABLE.equals(action)) {
+                addData(intent.getByteArrayExtra(RFduinoService.EXTRA_DATA));
+            }
+        }
+    };
 
     private void upgradeState(int newState) {
         if (newState > state) {
@@ -322,77 +420,11 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         dataLayout.addView(
                 view, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        if(s.compareTo("01") == 0){
+        if(s.compareTo("01") == 0 && !alarmActivated){
+            alarmActivated = true;
             Intent intent = new Intent(this,AlarmActivity.class);
             startActivity(intent);
         }
     }
-
-    @Override
-    public void onLeScan(BluetoothDevice device, final int rssi, final byte[] scanRecord) {
-        bluetoothAdapter.stopLeScan(this);
-        bluetoothDevice = device;
-
-        RFduinoActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                deviceInfoText.setText(
-                        BluetoothHelper.getDeviceInfoText(bluetoothDevice, rssi, scanRecord));
-                updateUi();
-            }
-        });
-    }
-
-    @Override
-    public void onClick(View view) {
-        if (b.getText().equals("Unlock")) {
-            b.setText("Lock");
-            locked.setText("Your bike is unlocked");
-            lockImage.setImageResource(R.drawable.unlock_lock);
-
-
-        }else{
-            b.setText("Unlock");
-            locked.setText("Your bike is locked");
-            lockImage.setImageResource(R.drawable.lock_lock);
-
-        }
-
-    }
-
-    public void onResume(){
-        super.onResume();
-        setTitle(R.string.navigation_item_lock);
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        float z = event.values[2];
-
-        if(z < -8 && yes == false){
-            if (b.getText().equals("Unlock")) {
-                b.setText("Lock");
-                locked.setText("Your bike is unlocked");
-                lockImage.setImageResource(R.drawable.unlock_lock);
-                rfduinoService.send(HexAsciiHelper.hexToBytes("008800"));
-            }else{
-                b.setText("Unlock");
-                locked.setText("Your bike is locked");
-                lockImage.setImageResource(R.drawable.lock_lock);
-                rfduinoService.send(HexAsciiHelper.hexToBytes("880000"));
-            }
-
-            yes = true;
-        }
-        if(z > 8 && yes == true){
-            yes = false;
-        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-
 }
 
