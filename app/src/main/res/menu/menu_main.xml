@@ -2,9 +2,5 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.axelfriberg.bikebuddy.MainActivity">
-    <item
-        android:id="@+id/action_rfduino"
-        android:orderInCategory="101"
-        android:title="@string/action_rfduino"
-        app:showAsAction="never" />
+
 </menu>

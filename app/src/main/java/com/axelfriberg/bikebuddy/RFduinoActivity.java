@@ -12,6 +12,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.ActionBar;
@@ -34,11 +35,12 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
     private Button b;
     private TextView locked;
     private ImageView lockImage;
-    private ToggleButton devButton;
-    Sensor accelerometer;
-    SensorManager sm;
-    boolean yes;
-    EditText password;
+    private Sensor accelerometer;
+    private SensorManager sm;
+    private boolean yes;
+    private EditText password;
+    private MediaPlayer mediaPlayer1;
+    private MediaPlayer mediaPlayer2;
     private boolean alarmActivated;
 
     // State machine
@@ -85,6 +87,9 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         ab.setDisplayHomeAsUpEnabled(true);
 
         setTitle(R.string.navigation_item_lock);
+
+        mediaPlayer1 = MediaPlayer.create(this, R.raw.your_bike_is_locked);
+        mediaPlayer2 = MediaPlayer.create(this, R.raw.your_bike_is_unlocked);
 
         sm = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -273,12 +278,14 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         if(z < -8 && yes == false){
             if (b.getText().equals("Unlock")) {
                 b.setText("Lock");
+                mediaPlayer2.start();
                 locked.setText("Your bike is unlocked");
                 lockImage.setImageResource(R.drawable.unlock_lock);
                 if(rfduinoService != null)
                     rfduinoService.send(HexAsciiHelper.hexToBytes("008800"));
             }else{
                 b.setText("Unlock");
+                mediaPlayer1.start();
                 locked.setText("Your bike is locked");
                 lockImage.setImageResource(R.drawable.lock_lock);
                 if(rfduinoService != null)

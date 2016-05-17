@@ -186,11 +186,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 startActivity(intent2);
                                 return true;
                             case R.id.navigation_item_lock:
-                                LockFragment lockFragment = new LockFragment();
+                                /*LockFragment lockFragment = new LockFragment();
                                 fragmentTransaction.hide(mMapFragment)
                                         .replace(R.id.frame, lockFragment)
                                         .addToBackStack(null)
-                                        .commit();
+                                        .commit();*/
+                                Intent intent3 = new Intent(MainActivity.this, RFduinoActivity.class);
+                                startActivity(intent3);
                                 return true;
                             case R.id.navigation_item_statistics:
                                 StatisticFragment statisticFragment = new StatisticFragment();
@@ -229,11 +231,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_rfduino) {
-            Intent intent = new Intent(this, RFduinoActivity.class);
-            startActivity(intent);
-        }
+
         return super.onOptionsItemSelected(item);
     }
 

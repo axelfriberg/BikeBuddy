@@ -6,6 +6,11 @@
             android:checked="true"
             android:icon="@drawable/ic_map_black_48dp"
             android:title="@string/title_activity_maps"/>
+
+        <item
+            android:id="@+id/navigation_item_statistics"
+            android:title="Statistics"
+            android:icon="@drawable/ic_timeline_black_48dp"/>
         <item
             android:id="@+id/navigation_item_nfc"
             android:title="@string/navigation_item_2"
@@ -14,10 +19,7 @@
             android:id="@+id/navigation_item_lock"
             android:icon="@drawable/ic_lock_outline_black_48dp"
             android:title="@string/navigation_item_lock"/>
-        <item
-            android:id="@+id/navigation_item_statistics"
-            android:title="Statistics"
-            android:icon="@drawable/ic_timeline_black_48dp"/>
+
 
     </group>
 </menu>
