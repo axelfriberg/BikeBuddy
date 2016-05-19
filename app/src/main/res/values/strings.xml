@@ -12,9 +12,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="statistic_text3">100km</string>
-    <string name="statistics_text1">17km.</string>
-    <string name ="statistics_text2">4km</string>
-    <string name ="statistics_test4">30km/h</string>
+    <string name="statistics_text1">17km</string>
+    <string name ="statistics_text2">10km/h</string>
+    <string name ="statistics_text4">30km/h</string>
     <string name ="s_t3">30km/week</string>
     <string name="navigation_item_lock">Lock</string>
     <string name="title_activity_maps">Map</string>

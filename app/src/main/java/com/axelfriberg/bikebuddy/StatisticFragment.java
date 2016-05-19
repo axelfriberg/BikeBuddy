@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class StatisticFragment extends Fragment {
-    private TextView text;
+
 
     public StatisticFragment() {
 
@@ -27,7 +27,7 @@ public class StatisticFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_statistic, container, false);
-        text = (TextView)v.findViewById(R.id.sf_text);
+
 
 return v;
     }
