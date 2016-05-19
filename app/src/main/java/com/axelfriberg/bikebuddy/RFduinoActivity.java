@@ -254,18 +254,10 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
     @Override
     public void onClick(View view) {
         if (b.getText().equals("Unlock")) {
-            b.setText("Lock");
-            textView_locked.setText("Your bike is unlocked");
-            lockImage.setImageResource(R.drawable.unlock_lock);
-
-
+            unlock();
         }else{
-            b.setText("Unlock");
-            textView_locked.setText("Your bike is textView_locked");
-            lockImage.setImageResource(R.drawable.lock_lock);
-
+            lock();
         }
-
     }
 
     @Override
@@ -274,21 +266,9 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
 
         if(z < -8 && yes == false){
             if (b.getText().equals("Unlock")) {
-                b.setText("Lock");
-                mediaPlayer2.start();
-                textView_locked.setText("Your bike is unlocked");
-                lockImage.setImageResource(R.drawable.unlock_lock);
-                if(rfduinoService != null)
-                    rfduinoService.send(HexAsciiHelper.hexToBytes("008800"));
-                locked = false;
+               unlock();
             }else{
-                b.setText("Unlock");
-                mediaPlayer1.start();
-                textView_locked.setText("Your bike is locked");
-                lockImage.setImageResource(R.drawable.lock_lock);
-                if(rfduinoService != null)
-                    rfduinoService.send(HexAsciiHelper.hexToBytes("880000"));
-                locked = true;
+                lock();
             }
 
             yes = true;
@@ -296,6 +276,26 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         if(z > 8 && yes == true){
             yes = false;
         }
+    }
+
+    private void unlock(){
+        b.setText("Lock");
+        mediaPlayer2.start();
+        textView_locked.setText("Your bike is unlocked");
+        lockImage.setImageResource(R.drawable.unlock_lock);
+        if(rfduinoService != null)
+            rfduinoService.send(HexAsciiHelper.hexToBytes("008800"));
+        locked = false;
+    }
+
+    private void lock(){
+        b.setText("Unlock");
+        mediaPlayer1.start();
+        textView_locked.setText("Your bike is locked");
+        lockImage.setImageResource(R.drawable.lock_lock);
+        if(rfduinoService != null)
+            rfduinoService.send(HexAsciiHelper.hexToBytes("880000"));
+        locked = true;
     }
 
     @Override

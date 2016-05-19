@@ -17,34 +17,24 @@
         android:baselineAligned="true"
         android:gravity="center">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Unlock"
-            android:id="@+id/button_lock"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
-
 
         <ImageView
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_margin="20dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:src="@drawable/lock_lock"
             android:id="@+id/lock_image"
+            android:layout_marginTop="100dp" />
 
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="30sp"
+            android:textSize="30dp"
             android:text="Your bike is locked"
             android:id="@+id/locked_text"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="42dp" />
+            android:layout_marginTop="32dp" />
 
         <EditText
             android:layout_width="wrap_content"
@@ -62,6 +52,14 @@
             android:text="Friend password"
             android:id="@+id/passwordTextView"
             android:layout_below="@+id/lock_image"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unlock"
+            android:id="@+id/button_lock"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true" />
 
         <ToggleButton
