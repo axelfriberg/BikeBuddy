@@ -33,7 +33,8 @@ import java.util.UUID;
 
 public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapter.LeScanCallback, View.OnClickListener, SensorEventListener {
     private Button b;
-    private TextView locked;
+    private TextView textView_locked;
+    private boolean locked;
     private ImageView lockImage;
     private Sensor accelerometer;
     private SensorManager sm;
@@ -41,7 +42,6 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
     private EditText password;
     private MediaPlayer mediaPlayer1;
     private MediaPlayer mediaPlayer2;
-    private boolean alarmActivated;
 
     // State machine
     final private static int STATE_BLUETOOTH_OFF = 1;
@@ -71,8 +71,6 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
     private Button clearButton;
     private LinearLayout dataLayout;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +89,8 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         mediaPlayer1 = MediaPlayer.create(this, R.raw.your_bike_is_locked);
         mediaPlayer2 = MediaPlayer.create(this, R.raw.your_bike_is_unlocked);
 
+        locked = true;
+
         sm = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sm.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -106,7 +106,7 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
                 }
             }
         });
-        locked = (TextView)findViewById(R.id.locked_text);
+        textView_locked = (TextView)findViewById(R.id.locked_text);
         lockImage = (ImageView)findViewById(R.id.lock_image);
         b.setOnClickListener(this);
         password = (EditText)findViewById(R.id.friendPassword);
@@ -220,14 +220,12 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         unregisterReceiver(scanModeReceiver);
         unregisterReceiver(bluetoothStateReceiver);
         unregisterReceiver(rfduinoReceiver);
-        alarmActivated = false;
         sm.unregisterListener(this);
     }
 
     @Override
     public void onPause(){
         super.onPause();
-        alarmActivated = false;
         sm.unregisterListener(this);
     }
 
@@ -237,7 +235,6 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         sm.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         setTitle(R.string.navigation_item_lock);
     }
-
 
     @Override
     public void onLeScan(BluetoothDevice device, final int rssi, final byte[] scanRecord) {
@@ -258,13 +255,13 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
     public void onClick(View view) {
         if (b.getText().equals("Unlock")) {
             b.setText("Lock");
-            locked.setText("Your bike is unlocked");
+            textView_locked.setText("Your bike is unlocked");
             lockImage.setImageResource(R.drawable.unlock_lock);
 
 
         }else{
             b.setText("Unlock");
-            locked.setText("Your bike is locked");
+            textView_locked.setText("Your bike is textView_locked");
             lockImage.setImageResource(R.drawable.lock_lock);
 
         }
@@ -279,17 +276,19 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
             if (b.getText().equals("Unlock")) {
                 b.setText("Lock");
                 mediaPlayer2.start();
-                locked.setText("Your bike is unlocked");
+                textView_locked.setText("Your bike is unlocked");
                 lockImage.setImageResource(R.drawable.unlock_lock);
                 if(rfduinoService != null)
                     rfduinoService.send(HexAsciiHelper.hexToBytes("008800"));
+                locked = false;
             }else{
                 b.setText("Unlock");
                 mediaPlayer1.start();
-                locked.setText("Your bike is locked");
+                textView_locked.setText("Your bike is locked");
                 lockImage.setImageResource(R.drawable.lock_lock);
                 if(rfduinoService != null)
                     rfduinoService.send(HexAsciiHelper.hexToBytes("880000"));
+                locked = true;
             }
 
             yes = true;
@@ -429,8 +428,7 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         dataLayout.addView(
                 view, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        if(s.compareTo("01") == 0 && !alarmActivated){
-            alarmActivated = true;
+        if(s.compareTo("01") == 0 && locked == true){
             Intent intent = new Intent(this,AlarmActivity.class);
             startActivity(intent);
         }

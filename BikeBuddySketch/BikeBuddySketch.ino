@@ -63,7 +63,7 @@ void setup() {
   // (if the deviceName and advertisementData are too long to fix into the 31 byte
   // ble advertisement packet, then the advertisementData is truncated first down to
   // a single byte, then it will truncate the deviceName)
-  RFduinoBLE.advertisementData = "myBike";
+  RFduinoBLE.advertisementData = "BikeBuddy";
   
   // start the BLE stack
   RFduinoBLE.begin();
@@ -76,9 +76,9 @@ void loop() {
   int accBike = analogRead(accZ);
 
   //delay_until_button(HIGH);
-  if (accBike > 150) {
+  if (accBike > 180) {
     RFduinoBLE.send(1);
-    //delay (200);
+    delay (1000);
     //RFduinoBLE.send(0);
   }
   delay (200);
@@ -130,8 +130,8 @@ void RFduinoBLE_onConnect() {
   analogWrite(led2, 255);
   analogWrite(led3, 255);
   delay (500);
-  analogWrite(led1, 0);
-  analogWrite(led2, 255);
+  analogWrite(led1, 255);
+  analogWrite(led2, 0);
   analogWrite(led3, 0);
 }
 
