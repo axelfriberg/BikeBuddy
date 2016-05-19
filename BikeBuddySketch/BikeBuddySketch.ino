@@ -76,7 +76,7 @@ void loop() {
   int accBike = analogRead(accZ);
 
   //delay_until_button(HIGH);
-  if (accBike > 200) {
+  if (accBike > 150) {
     RFduinoBLE.send(1);
     //delay (200);
     //RFduinoBLE.send(0);

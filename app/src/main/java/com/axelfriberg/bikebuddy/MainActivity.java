@@ -184,11 +184,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 startActivity(intent2);
                                 return true;
                             case R.id.navigation_item_lock:
-                                /*LockFragment lockFragment = new LockFragment();
-                                fragmentTransaction.hide(mMapFragment)
-                                        .replace(R.id.frame, lockFragment)
-                                        .addToBackStack(null)
-                                        .commit();*/
                                 Intent intent3 = new Intent(MainActivity.this, RFduinoActivity.class);
                                 startActivity(intent3);
                                 return true;
