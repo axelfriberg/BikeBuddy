@@ -5,16 +5,17 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class StatisticFragment extends Fragment {
     private TextView text;
-    private ListView list;
 
     public StatisticFragment() {
-
-        // Required empty public constructor
 
     }
     public void onCreate(Bundle savedInstanceState) {
@@ -22,21 +23,18 @@ public class StatisticFragment extends Fragment {
         getActivity().setTitle(R.string.navigation_Statistics);
     }
 
-    @Override
+        @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_statistic, container, false);
         text = (TextView)v.findViewById(R.id.sf_text);
-        list = (ListView)getActivity().findViewById(R.id.statistics_list_View);
-        return v;
+
+return v;
     }
     public void onResume(){
         super.onResume();
         getActivity().setTitle(R.string.navigation_Statistics);
     }
-
-
     public void onClick(View v) {
     }
 }
