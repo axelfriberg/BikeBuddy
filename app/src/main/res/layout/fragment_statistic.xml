@@ -3,32 +3,43 @@
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scroll">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-
-    <TextView
-        style="?android:attr/listSeparatorTextViewStyle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/this_Week"
-        />
-
-    <TextView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/sf_text"
-        android:text="@string/statistics_text" />
+        android:layout_height="match_parent">
 
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/statistics_list_View"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="123dp" />
-</LinearLayout>
+        <TextView
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Today"
+            android:text="Today"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/sf_text2"
+            android:text="@string/statistics_text2"
+            />
+
+        <TextView
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/this_Week"
+            android:text="This week"/>
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/sf_text"
+            android:text="@string/statistics_text1" />
+        <TextView
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/record"
+            android:text="Personal Records"
+            />
+    </LinearLayout>
 
 </ScrollView>
