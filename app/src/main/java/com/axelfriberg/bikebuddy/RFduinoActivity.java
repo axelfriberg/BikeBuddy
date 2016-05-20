@@ -38,7 +38,7 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
     private ImageView lockImage;
     private Sensor accelerometer;
     private SensorManager sm;
-    private boolean yes;
+    private boolean turnOver;
     private EditText password;
     private MediaPlayer mediaPlayer1;
     private MediaPlayer mediaPlayer2;
@@ -253,28 +253,26 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
 
     @Override
     public void onClick(View view) {
-        if (b.getText().equals("Unlock")) {
+        if (b.getText().equals("Unlock"))
             unlock();
-        }else{
+        else
             lock();
-        }
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
         float z = event.values[2];
 
-        if(z < -8 && yes == false){
-            if (b.getText().equals("Unlock")) {
+        if(z < -8 && turnOver == false){
+            if (locked == true) {
                unlock();
             }else{
                 lock();
             }
-
-            yes = true;
+            turnOver = true;
         }
-        if(z > 8 && yes == true){
-            yes = false;
+        if(z > 8 && turnOver == true){
+            turnOver = false;
         }
     }
 
