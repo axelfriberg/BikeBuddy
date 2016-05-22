@@ -26,7 +26,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
+import java.util.Timer;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -51,6 +51,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.DecimalFormat;
+import java.util.TimerTask;
 
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -123,6 +124,54 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         tv = (TextView) findViewById(R.id.distance);
 
         setTitle(R.string.title_activity_maps);
+
+
+        //timer
+        Timer timer = new Timer();
+
+        //Set the schedule function and rate
+        timer.scheduleAtFixedRate(new TimerTask() {
+
+                                  @Override
+                                  public void run() {
+                                      //Called each time when 5000 milliseconds (15 seconds) (the period parameter)
+                                      if (enableVibration) {
+                                          Log.v(TAG, "vibrates");
+                                          if (distance <= 1) {
+                                              try {
+                                                  vibrate(4);
+                                              } catch (InterruptedException e) {
+                                                  e.printStackTrace();
+                                              }
+                                          } else if (distance <= 5) {
+                                              try {
+                                                  vibrate(3);
+                                              } catch (InterruptedException e) {
+                                                  e.printStackTrace();
+                                              }
+                                          } else if (distance <= 10) {
+                                              try {
+                                                  vibrate(2);
+                                              } catch (InterruptedException e) {
+                                                  e.printStackTrace();
+                                              }
+                                          } else if (distance <= 25) {
+                                              try {
+                                                  vibrate(1);
+                                              } catch (InterruptedException e) {
+                                                  e.printStackTrace();
+                                              }
+                                          }
+
+                                      }
+                                  }
+
+                              },
+        //Set how long before to start calling the TimerTask (in milliseconds)
+                0,
+        //Set the amount of time between each execution (in milliseconds)
+                5*1000);
+
 
         // egen position
         // Create the LocationRequest object
@@ -362,7 +411,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onLocationChanged(Location location) {
-        handleNewLocation(location);
+        try {
+            handleNewLocation(location);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -394,7 +447,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    private void handleNewLocation(Location location) {
+    private void handleNewLocation(Location location) throws InterruptedException {
         Log.d(TAG, location.toString());
         currentLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
@@ -452,7 +505,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public String distance(double lat, double lon, double el1, double el2) {
+    public String distance(double lat, double lon, double el1, double el2) throws InterruptedException {
 
         final int R = 6371; // Radius of the earth
 
@@ -466,29 +519,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         double height = el1 - el2;
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
         distance = Math.sqrt(distance);
-        if (enableVibration && counter == 5) {
+       /* if (enableVibration && counter == 5) {
             Log.v(TAG, "vibrates");
             if (distance <= 1) {
-                vibrate(100);
+                vibrate(4);
             } else if (distance <= 5) {
-                vibrate(200);
+                vibrate(3);
             } else if (distance <= 10) {
-                vibrate(300);
+                vibrate(2);
             } else if (distance <= 25) {
-                vibrate(400);
-            } else if (distance <= 50) {
-                vibrate(500);
+                vibrate(1);
             }
             counter = 0;
-        }
+        }*/
         DecimalFormat df = new DecimalFormat("#.##");
         return df.format(distance);
     }
 
-    public void vibrate(int ms) {
+    public void vibrate(int nbr) throws InterruptedException {
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        long[] pattern = {0, ms, ms, ms};
-        v.vibrate(pattern, -1);
+        for(int i = 0; i < nbr; i++){
+            Thread.sleep(150);
+            v.vibrate(150);
+        }
+
     }
 
 
