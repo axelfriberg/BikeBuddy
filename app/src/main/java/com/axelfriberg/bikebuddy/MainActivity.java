@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Button button1;
     private Button button2;
     private ImageButton button3;
-    private int counter = 0;
     private SensorManager mSensorManager;
     private boolean markerReady = false;
     private double currentLatitude;
@@ -134,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                   @Override
                                   public void run() {
-                                      //Called each time when 5000 milliseconds (15 seconds) (the period parameter)
+                                      //Called each time when 5000 milliseconds (5 seconds) (the period parameter)
                                       if (enableVibration) {
                                           Log.v(TAG, "vibrates");
                                           if (distance <= 1) {
@@ -411,11 +410,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onLocationChanged(Location location) {
-        try {
             handleNewLocation(location);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -447,11 +442,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    private void handleNewLocation(Location location) throws InterruptedException {
+    private void handleNewLocation(Location location){
         Log.d(TAG, location.toString());
         currentLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
-        counter++;
         //display current position
 
         if (position != null) {
@@ -505,7 +499,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public String distance(double lat, double lon, double el1, double el2) throws InterruptedException {
+    public String distance(double lat, double lon, double el1, double el2){
 
         final int R = 6371; // Radius of the earth
 
@@ -519,19 +513,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         double height = el1 - el2;
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
         distance = Math.sqrt(distance);
-       /* if (enableVibration && counter == 5) {
-            Log.v(TAG, "vibrates");
-            if (distance <= 1) {
-                vibrate(4);
-            } else if (distance <= 5) {
-                vibrate(3);
-            } else if (distance <= 10) {
-                vibrate(2);
-            } else if (distance <= 25) {
-                vibrate(1);
-            }
-            counter = 0;
-        }*/
         DecimalFormat df = new DecimalFormat("#.##");
         return df.format(distance);
     }
@@ -552,7 +533,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (v.getId() == R.id.mark_button) {
             enableUpdates = true;
             enableVibration = true;
-            counter = 0;
         } else if (v.getId() == R.id.remove_button) {
             if (marker != null) {
                 marker.remove();
