@@ -86,8 +86,8 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
 
         setTitle(R.string.navigation_item_lock);
 
-        mediaPlayer1 = MediaPlayer.create(this, R.raw.your_bike_is_locked);
-        mediaPlayer2 = MediaPlayer.create(this, R.raw.your_bike_is_unlocked);
+        mediaPlayer1 = MediaPlayer.create(this, R.raw.lock);
+        mediaPlayer2 = MediaPlayer.create(this, R.raw.unlock);
 
         locked = true;
 
@@ -430,15 +430,6 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
             Intent intent = new Intent(this,AlarmActivity.class);
             startActivity(intent);
         }
-    }
-
-    private void scanAndConnect(){
-        scanStarted = true;
-        bluetoothAdapter.startLeScan(
-                new UUID[]{ RFduinoService.UUID_SERVICE },
-                RFduinoActivity.this);
-        Intent rfduinoIntent = new Intent(RFduinoActivity.this, RFduinoService.class);
-        bindService(rfduinoIntent, rfduinoServiceConnection, BIND_AUTO_CREATE);
     }
 }
 
