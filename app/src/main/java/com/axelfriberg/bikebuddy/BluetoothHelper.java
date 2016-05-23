@@ -4,6 +4,11 @@ import android.bluetooth.BluetoothDevice;
 
 import java.util.UUID;
 
+/**
+ * This code has been taken from https://github.com/lann/RFDuinoTest
+ *
+ * */
+
 public class BluetoothHelper {
     public static String shortUuidFormat = "0000%04X-0000-1000-8000-00805F9B34FB";
 

@@ -31,6 +31,11 @@ import android.widget.ToggleButton;
 
 import java.util.UUID;
 
+/**
+ * Parts of this code has been taken from https://github.com/lann/RFDuinoTest
+ *
+ * */
+
 public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapter.LeScanCallback, View.OnClickListener, SensorEventListener {
     private Button b;
     private TextView textView_locked;
@@ -86,8 +91,8 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
 
         setTitle(R.string.navigation_item_lock);
 
-        mediaPlayer1 = MediaPlayer.create(this, R.raw.lock);
-        mediaPlayer2 = MediaPlayer.create(this, R.raw.unlock);
+        mediaPlayer1 = MediaPlayer.create(this, R.raw.lock_sound);
+        mediaPlayer2 = MediaPlayer.create(this, R.raw.unlock_sound);
 
         locked = true;
 
@@ -277,7 +282,7 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         }
     }
     //unlock
-    //changing both the colour and the look of lock picture and gives the user soundfeeback
+    //changing both the colour and the look of lock_sound picture and gives the user soundfeeback
     private void unlock(){
         b.setText("Lock");
         mediaPlayer2.start();
@@ -287,7 +292,7 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
             rfduinoService.send(HexAsciiHelper.hexToBytes("008800"));
         locked = false;
     }
-    //lock
+
     private void lock(){
         b.setText("Unlock");
         mediaPlayer1.start();

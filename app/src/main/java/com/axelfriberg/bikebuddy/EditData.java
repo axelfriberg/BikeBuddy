@@ -14,6 +14,11 @@ import android.widget.ToggleButton;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This code has been taken from https://github.com/lann/RFDuinoTest
+ *
+ * */
+
 public class EditData extends LinearLayout{
     EditText dataEdit;
     ToggleButton hexToggle;

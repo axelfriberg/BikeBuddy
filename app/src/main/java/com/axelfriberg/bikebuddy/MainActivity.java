@@ -51,6 +51,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.text.DecimalFormat;
 import java.util.TimerTask;
 
+/*
+Parts of the code for the navigation drawer has been taken from here:
+http://www.technotalkative.com/part-4-playing-with-navigationview/
+http://blog.xebia.com/android-design-support-navigationview/
+ */
+
 
 /* Parts of the code taken from following links:
  *Basic Google map: https://developers.google.com/maps/documentation/android-api/start#step_4_get_a_google_maps_api_key
@@ -90,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     // get position of yourself
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    public static final String TAG = MapsActivity.class.getSimpleName();
+    public static final String TAG = MainActivity.class.getSimpleName();
     private Marker marker;
     private Marker position;
 

@@ -2,6 +2,11 @@ package com.axelfriberg.bikebuddy;
 
 import org.apache.http.util.ByteArrayBuffer;
 
+/**
+ * This code has been taken from https://github.com/lann/RFDuinoTest
+ *
+ * */
+
 public class HexAsciiHelper {
     public static int PRINTABLE_ASCII_MIN = 0x20; // ' '
     public static int PRINTABLE_ASCII_MAX = 0x7E; // '~'

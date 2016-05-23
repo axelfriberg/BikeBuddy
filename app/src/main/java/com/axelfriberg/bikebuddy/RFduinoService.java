@@ -43,9 +43,15 @@ import android.util.Log;
 
 import java.util.UUID;
 
+/**
+ * This code has been taken from https://github.com/lann/RFDuinoTest
+ *
+ * */
+
 /*
  * Adapted from:
  * http://developer.android.com/samples/BluetoothLeGatt/src/com.example.android.bluetoothlegatt/BluetoothLeService.html
+ *
  */
 public class RFduinoService extends Service {
     private final static String TAG = RFduinoService.class.getSimpleName();
