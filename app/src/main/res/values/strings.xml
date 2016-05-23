@@ -24,4 +24,11 @@
     <string name="action_rfduino">RFduino</string>
     <string name="tag_write_error_undefined">error_undefined</string>
     <string name="username">John Doe</string>
+    <string name="bike_not_parked">Bike is not parked</string>
+    <string name="distance">"Distance: "</string>
+    <string name="m">" m"</string>
+    <string name="your_bike">Your bike</string>
+    <string name="this_is_your_bike">This is your bike!</string>
+    <string name="this_is_not_your_bike">This is not your bike!</string>
+    <string name="hold_tag">Hold device against tag to scan</string>
 </resources>

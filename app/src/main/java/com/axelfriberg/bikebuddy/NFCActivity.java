@@ -31,6 +31,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Locale;
 
+/* Parts of the code is taken from the following links:
+* NFC write basics: http://www.survivingwithandroid.com/2016/01/how-to-write-nfc-tag-in-android.html
+* NFC read basics: http://stackoverflow.com/questions/12453658/reading-data-from-nfc-tag
+* */
+
 public class NFCActivity extends AppCompatActivity {
     private NFCManager nfcMger;
     private String id = "My bike";
@@ -61,7 +66,7 @@ public class NFCActivity extends AppCompatActivity {
         message = createTextMessage(id);
         tv = (TextView) findViewById(R.id.scan_text);
         image = (ImageView) findViewById(R.id.scan_image);
-        tv.setText("Hold device against tag to scan");
+        tv.setText(R.string.hold_tag);
          mp1 = MediaPlayer.create(this, R.raw.fail_sound);
         mp2 = MediaPlayer.create(this, R.raw.success_sound);
     }
@@ -97,7 +102,7 @@ public class NFCActivity extends AppCompatActivity {
         Tag nfcTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         if (nfcTag == null) {
             Log.v("hjhj", "Unable to obtain NFC tag from intent!");
-            tv.setText("This is not your bike!");
+            tv.setText(R.string.this_is_not_your_bike);
             image.setImageResource(R.drawable.cross);
         } else {
             if(writeable) {
@@ -192,11 +197,11 @@ public class NFCActivity extends AppCompatActivity {
                 text = text.substring(3);
 
                 if (text.equals(id)){
-                    tv.setText("This is your bike!");
+                    tv.setText(R.string.this_is_your_bike);
                     image.setImageResource(R.drawable.check);
                     mp2.start();
                 }else{
-                    tv.setText("This is not your bike!");
+                    tv.setText(R.string.this_is_not_your_bike);
                     image.setImageResource(R.drawable.cross);
                     mp1.start();
                 }

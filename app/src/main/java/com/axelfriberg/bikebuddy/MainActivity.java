@@ -31,7 +31,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -49,10 +48,15 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import java.text.DecimalFormat;
 import java.util.TimerTask;
 
+
+/* Parts of the code taken from following links:
+ *Basic Google map: https://developers.google.com/maps/documentation/android-api/start#step_4_get_a_google_maps_api_key
+ *Location requests: http://blog.teamtreehouse.com/beginners-guide-location-android
+ *Calculate distance from to LatLong: http://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude-what-am-i-doi
+ */
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener, SensorEventListener {
@@ -80,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean rotateView = false;
     private boolean zoom = true;
     private boolean markerEnabled = false;
+    private Vibrator v;
 
 
     // get position of yourself
@@ -119,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         button1.setOnClickListener(this);
         button2.setOnClickListener(this);
         button3.setOnClickListener(this);
+
         //set text textview
         tv = (TextView) findViewById(R.id.distance);
 
@@ -270,9 +276,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -481,7 +484,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             LatLng latLng = new LatLng(markerLatitude, markerLongitude);
             MarkerOptions options = new MarkerOptions()
                     .position(latLng)
-                    .title("Your bike");
+                    .title(getString(R.string.your_bike));
             marker = mMap.addMarker(options);
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             Log.i(TAG, "put marker");
@@ -490,10 +493,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //display distance
 
         if (markerLatitude == 0 && markerLongitude == 0) {
-            tv.setText("Bike is not parked");
+            tv.setText(R.string.bike_not_parked);
             enableVibration = false;
         } else {
-            tv.setText("Distance: " + distance(markerLatitude, markerLongitude, 0, 0) + " m");
+            tv.setText(getString(R.string.distance) + distance(markerLatitude, markerLongitude, 0, 0) + getString(R.string.m));
             Log.v("Tag", "updates");
             enableVibration = true;
         }
@@ -518,7 +521,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void vibrate(int nbr) throws InterruptedException {
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         for(int i = 0; i < nbr; i++){
             Thread.sleep(150);
             v.vibrate(150);
@@ -538,7 +541,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 marker.remove();
                 enableVibration = false;
                 enableUpdates = false;
-                tv.setText("Bike is not parked");
+                tv.setText(R.string.bike_not_parked);
             }
             markerLatitude = 0;
             markerLongitude = 0;
