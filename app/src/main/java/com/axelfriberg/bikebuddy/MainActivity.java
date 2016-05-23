@@ -58,7 +58,7 @@ http://blog.xebia.com/android-design-support-navigationview/
  */
 
 
-/* Parts of the code taken from following links:
+/* Parts of the code for the map has been taken from following links:
  *Basic Google map: https://developers.google.com/maps/documentation/android-api/start#step_4_get_a_google_maps_api_key
  *Location requests: http://blog.teamtreehouse.com/beginners-guide-location-android
  *Calculate distance from to LatLong: http://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude-what-am-i-doi
@@ -99,10 +99,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static final String TAG = MainActivity.class.getSimpleName();
     private Marker marker;
     private Marker position;
-
-    //Save data to shared preferences
-    private SharedPreferences activityPreferences;
-    private SharedPreferences.Editor editor;
 
 
     @Override
