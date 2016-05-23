@@ -18,7 +18,7 @@ public class AlarmActivity extends AppCompatActivity {
         
         v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         mp = MediaPlayer.create(this,R.raw.car_alarm);
-
+        //creating vibrator
         long[] vibrator = new long[]{0,500,500,500,500,500,500,500,500,500,500};
         v.vibrate(vibrator,-1);
 
