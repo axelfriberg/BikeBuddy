@@ -91,8 +91,8 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
 
         setTitle(R.string.navigation_item_lock);
 
-        mediaPlayer1 = MediaPlayer.create(this, R.raw.lock_sound);
-        mediaPlayer2 = MediaPlayer.create(this, R.raw.unlock_sound);
+        mediaPlayer1 = MediaPlayer.create(this, R.raw.lock);
+        mediaPlayer2 = MediaPlayer.create(this, R.raw.unlock);
 
         locked = true;
 
