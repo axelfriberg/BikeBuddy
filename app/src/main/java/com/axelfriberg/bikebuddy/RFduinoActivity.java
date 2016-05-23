@@ -251,7 +251,7 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         });
     }
 
-    @Override
+    //click on lockbottom
     public void onClick(View view) {
         if (b.getText().equals("Unlock"))
             unlock();
@@ -260,6 +260,7 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
     }
 
     @Override
+    //check the z-coordinate of the axeleromenter when turn around the phone halfway.
     public void onSensorChanged(SensorEvent event) {
         float z = event.values[2];
 
@@ -275,7 +276,8 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
             turnOver = false;
         }
     }
-
+    //unlock
+    //changing both the colour and the look of lock picture and gives the user soundfeeback
     private void unlock(){
         b.setText("Lock");
         mediaPlayer2.start();
@@ -285,7 +287,7 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
             rfduinoService.send(HexAsciiHelper.hexToBytes("008800"));
         locked = false;
     }
-
+    //lock
     private void lock(){
         b.setText("Unlock");
         mediaPlayer1.start();
