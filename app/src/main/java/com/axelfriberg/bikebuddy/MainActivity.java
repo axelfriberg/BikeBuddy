@@ -3,7 +3,6 @@ package com.axelfriberg.bikebuddy;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -541,10 +540,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else if (v.getId() == R.id.remove_button) {
             if (marker != null) {
                 marker.remove();
-                enableVibration = false;
                 enableUpdates = false;
                 tv.setText(R.string.bike_not_parked);
             }
+            enableVibration = false;
             markerLatitude = 0;
             markerLongitude = 0;
         } else if (v.getId() == R.id.rotate_button) {

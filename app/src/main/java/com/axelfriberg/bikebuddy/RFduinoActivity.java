@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -44,7 +43,6 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
     private Sensor accelerometer;
     private SensorManager sm;
     private boolean turnOver;
-    private EditText password;
     private MediaPlayer mediaPlayer1;
     private MediaPlayer mediaPlayer2;
 
@@ -114,7 +112,6 @@ public class RFduinoActivity extends AppCompatActivity implements BluetoothAdapt
         textView_locked = (TextView)findViewById(R.id.locked_text);
         lockImage = (ImageView)findViewById(R.id.lock_image);
         b.setOnClickListener(this);
-        password = (EditText)findViewById(R.id.friendPassword);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 

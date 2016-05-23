@@ -5,7 +5,7 @@ import android.media.MediaPlayer;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.animation.Animation;
+
 
 public class AlarmActivity extends AppCompatActivity {
     private Vibrator v;

@@ -5,12 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class StatisticFragment extends Fragment {
 
@@ -35,6 +30,5 @@ return v;
         super.onResume();
         getActivity().setTitle(R.string.navigation_Statistics);
     }
-    public void onClick(View v) {
-    }
+
 }
